@@ -81,7 +81,7 @@ int daemon_main()
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(SERVER_PORT);
 	if (bind(sock_server, (struct sockaddr*)&server, sizeof(server)) < 0) return -2;
-	listen(sock_server, LISTEN_BACKLOG);
+	if (listen(sock_server, LISTEN_BACKLOG)) return -3;
 
 	int sock_client;
 	struct sockaddr_in client;
@@ -90,10 +90,10 @@ int daemon_main()
 	{
 		// New incomming connection, create thread
 		pthread_t thread;
-		if (pthread_create(&thread, NULL, &connection_handler, (void*)sock_client)) return -3;
+		if (pthread_create(&thread, NULL, &connection_handler, (void*)sock_client)) return -4;
 	}
 
-	if (sock_client < 0) return -4;
+	if (sock_client < 0) return -5;
 	return 0;
 
 	// FIXME: threads are not joined, socket not closed
