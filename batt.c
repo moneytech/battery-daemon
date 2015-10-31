@@ -53,9 +53,9 @@ void* connection_handler(void* data)
 {
 	int sock_client = (int)data;
 	char reply_headers[REPLY_BUFSZ], reply[REPLY_BUFSZ];
-	float batt_chrage = 0.0f;
-	int status = get_battery_charge(&batt_chrage);
-	int reply_sz = snprintf(reply, REPLY_BUFSZ, REPLY, status, batt_chrage);
+	float batt_charge = 0.0f;
+	int status = get_battery_charge(&batt_charge);
+	int reply_sz = snprintf(reply, REPLY_BUFSZ, REPLY, status, batt_charge);
 	if (reply_sz > 0 && reply_sz < REPLY_BUFSZ)
 	{
 		int reply_headers_sz = snprintf(reply_headers, REPLY_BUFSZ, REPLY_HEADERS, reply_sz);
