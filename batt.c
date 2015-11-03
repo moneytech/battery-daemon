@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
@@ -110,12 +111,16 @@ int daemonize()
 	if (sid < 0) return -2;
 
 	chdir("/");
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+	int sink = open("/dev/null", O_RDWR);
+	if (sink < 0
+		|| dup2(sink, STDIN_FILENO) < 0
+		|| dup2(sink, STDOUT_FILENO) < 0
+		|| dup2(sink, STDERR_FILENO) < 0)
+		return -3;
+	close(sink);
 
 	int ret = daemon_main();
-	return ret == 0 ? 0 : ret - 2;
+	return ret == 0 ? 0 : ret - 3;
 }
 
 int main(int argc, char *argv[])
